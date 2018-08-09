@@ -1,5 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
+include("cmake/HunterGate.cmake")
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.23.11.tar.gz"
+    SHA1 "b732407d782459f89950ab52bc0ff9612f3e4be2"
+)
+
 SET(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE true)
 
 IF(COMMAND CMAKE_POLICY)
@@ -15,6 +21,20 @@ IF(COMMAND CMAKE_POLICY)
 ENDIF(COMMAND CMAKE_POLICY)
 
 PROJECT(WT)
+
+hunter_add_package(ZLIB)
+hunter_add_package(OpenSSL)
+hunter_add_package(PNG)
+hunter_add_package(Boost COMPONENTS program_options system filesystem thread)
+hunter_add_package(sqlite3)
+hunter_add_package(MySQL-client)
+hunter_add_package(PostgreSQL)
+
+set(ZLIB_PREFIX ${ZLIB_ROOT})
+set(SSL_PREFIX ${OPENSSL_ROOT})
+set(PNG_PREFIX ${PNG_ROOT})
+set(MYSQL_PREFIX ${MYSQL-CLIENT_ROOT})
+set(POSTGRES_PREFIX ${POSTGRESQL_ROOT})
 
 SET(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
