@@ -6,9 +6,10 @@ PKG_NAME:=wt
 PKG_VERSION:=4.1.0
 PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/emweb/wt/archive
-PKG_MD5SUM:=6f4faa4bc117a53449bca446c2e7a92f
+#PKG_SOURCE:=$(PKG_VERSION).tar.gz
+#PKG_SOURCE_URL:=https://github.com/emweb/wt/archive
+#PKG_MD5SUM:=6f4faa4bc117a53449bca446c2e7a92f
+SOURCE_DIR:=/home/jboehme/Development/wt/source
 
 PKG_USE_MIPS16:=0
 
@@ -122,13 +123,21 @@ CMAKE_OPTIONS += \
 	-DCONNECTOR_FCGI=OFF
 endif
 
+# Package preparation instructions; create the build directory and copy the source code.
+# The last command is necessary to ensure our preparation instructions remain compatible with the patching system.
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	cp -r $(SOURCE_DIR)/* $(PKG_BUILD_DIR)
+	$(Build/Patch)
+endef
+
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
 	$(CP) -a $(PKG_INSTALL_DIR)/usr/include/Wt $(1)/usr/include
 
-# TODO install FindWt.cmake
-#	$(INSTALL_DIR) $(1)/usr/share/cmake-2.4/Modules
-#	$(CP) $(PKG_INSTALL_DIR)/usr/share/cmake-2.4/Modules/FindWt.cmake $(1)/usr/share/cmake-2.4/Modules
+	$(INSTALL_DIR) $(1)/usr/lib/cmake/wt
+	$(CP) $(PKG_BUILD_DIR)/wt-config.cmake $(1)/usr/lib/cmake/wt
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/cmake/wt/* $(1)/usr/lib/cmake/wt
 
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libwt*.so* $(1)/usr/lib
